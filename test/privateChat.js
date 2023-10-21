@@ -32,8 +32,7 @@ describe("Private Chat - Tests", function () {
             expect(contractPrivateChat).to.be.not.equal(null);
         });
 
-
-        // Some Possible cases
+        // Handle Some Possible cases
         it("User try to create a chat without register before => Revert", async function () {
             
         });
