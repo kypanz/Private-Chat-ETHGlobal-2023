@@ -1,6 +1,23 @@
 const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const { expect } = require("chai");
 
+
+function generateKeys() {
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 2048,
+        publicKeyEncoding: {
+            type: 'spki',
+            format: 'pem',
+        },
+        privateKeyEncoding: {
+            type: 'pkcs8',
+            format: 'pem',
+        },
+    });
+    return { publicKey, privateKey };
+}
+
+
 describe("Private Chat - Tests", function () {
 
     async function createChatInstance() {
@@ -34,7 +51,7 @@ describe("Private Chat - Tests", function () {
 
         // Ideal situation
         it("Users register in the smart contract with their public keys [ Asymmetric ]", async function () {
-            
+
         });
 
         it("userA open a chat to userB, and define a secretKey for the chat to start a conversation [ Symmetric ]", async function () {
@@ -42,28 +59,28 @@ describe("Private Chat - Tests", function () {
         });
 
         it("userB accept the chat", async function () {
-            
+
         });
 
         it("userA and userB can start sending private messages", async function () {
-            
+
         });
 
         // Handle Some Possible cases
         it("User try to create a chat without register before => Revert", async function () {
-            
+
         });
 
         it("UserA try to send a message to UserB, but UserB is not registred => Revert", async function () {
-            
+
         });
 
         it("UserA try to send a message to UserB, but UserB don't accept => Revert", async function () {
-            
+
         });
 
         it("Attacker try to read a message from another chat => this can se only the encrypted data", async function () {
-            
+
         });
 
     });
