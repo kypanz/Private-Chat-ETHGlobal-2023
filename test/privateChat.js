@@ -53,11 +53,11 @@ describe("Private Chat - Tests", function () {
 
     async function createChatInstance() {
 
-        const [accountA, accountB, accountC] = await ethers.getSigners();
+        const [accountA, accountB, accountC, ...othersUsers] = await ethers.getSigners();
         const PrivateChat = await ethers.getContractFactory("PrivateChat");
         const privateChat = await PrivateChat.deploy();
 
-        return { privateChat, accountA, accountB, accountC };
+        return { privateChat, accountA, accountB, accountC, othersUsers};
     }
 
     describe("Deployment", function () {
@@ -66,6 +66,7 @@ describe("Private Chat - Tests", function () {
         let userA;
         let userB;
         let attacker;
+        let moreUsers;
 
         // Asymmetric keys
         let userAkeys = { publicKey, privateKey } = generateAsymmetricKeys();
@@ -81,11 +82,12 @@ describe("Private Chat - Tests", function () {
         let contractPrivateChat;
 
         it("Instanciate the contract and the accounts", async function () {
-            const { privateChat, accountA, accountB, accountC } = await loadFixture(createChatInstance);
+            const { privateChat, accountA, accountB, accountC, othersUsers } = await loadFixture(createChatInstance);
             contractPrivateChat = privateChat;
             userA = accountA;
             userB = accountB
             attacker = accountC;
+            moreUsers = othersUsers;
             expect(userA.address).to.be.not.equal(null);
             expect(userB.address).to.be.not.equal(null);
             expect(attacker.address).to.be.not.equal(null);
@@ -142,7 +144,10 @@ describe("Private Chat - Tests", function () {
 
         // Handle Some Possible cases
         it("User try to create a chat without register before => Revert", async function () {
-
+            const { key, iv } = usersKeysAES;
+            const message = encryptAsymmetricMessage(userBkeys.publicKey, `${theSecretAES}, the key is : ${key.toString('hex')}, the iv is : ${iv.toString('hex')}`);
+            const response_x = contractPrivateChat.connect(moreUsers[0]).createChat(userB.address, message);
+            await expect(response_x).revertedWith('you need to be registered');
         });
 
         it("UserA try to send a message to UserB, but UserB is not registred => Revert", async function () {

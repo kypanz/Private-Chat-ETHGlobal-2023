@@ -37,6 +37,8 @@ contract PrivateChat {
     }
 
     function createChat(address _toUser, string memory _secretKeyEncrypted) public {
+        
+        require(users[msg.sender].addr != address(0), 'you need to be registered');
 
         User storage userA = users[msg.sender];
         User storage userB = users[_toUser];
