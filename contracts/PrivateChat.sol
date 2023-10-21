@@ -9,7 +9,7 @@ contract PrivateChat {
     string constant con_modulusLength = '2048';
     string constant con_pubKeyType = 'spki';
     string constant con_format = 'pem';
-    
+
     struct User {
         address addr;
         string pub;
@@ -36,7 +36,7 @@ contract PrivateChat {
         });
     }
 
-    function createChat(address _toUser) public {
+    function createChat(address _toUser, string memory _secretKeyEncrypted) public {
 
         User storage userA = users[msg.sender];
         User storage userB = users[_toUser];
@@ -49,6 +49,8 @@ contract PrivateChat {
             messages : messages
         });
 
+        chats[chatId].messages.push(_secretKeyEncrypted);
+
     }
 
     function sendMessage(uint256 _toChat, string memory _message) public {
@@ -57,8 +59,8 @@ contract PrivateChat {
         emit MessageSended(_toChat, msg.sender, _message);
     }
 
-    function getMessages(uint256 _id) public view returns(Chat memory _chats) {
-        return chats[_id];
+    function getMessages(uint256 _id) public view returns(string[] memory _messages) {
+        return chats[_id].messages;
     }
 
 }
