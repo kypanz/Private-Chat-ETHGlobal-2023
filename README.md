@@ -16,3 +16,23 @@ To be honestly i really wanna build the frontend but i not have much time becaus
 ## Test cases
 
 ![image](https://github.com/kypanz/Private-Chat-ETHGlobal-2023/assets/37570367/369d0f84-22fd-4cb5-92da-1bd2b216c113)
+
+## Installation 
+
+Clone the repo with : 
+
+```shell
+git clone git@github.com:kypanz/Private-Chat-ETHGlobal-2023.git
+```
+
+Install packages with :
+
+```shell
+npm install
+```
+
+Run the test cases with :
+
+```shell
+npx hardhat test
+```
