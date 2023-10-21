@@ -32,6 +32,23 @@ describe("Private Chat - Tests", function () {
             expect(contractPrivateChat).to.be.not.equal(null);
         });
 
+        // Ideal situation
+        it("Users register in the smart contract with their public keys [ Asymmetric ]", async function () {
+            
+        });
+
+        it("userA open a chat to userB, and define a secretKey for the chat to start a conversation [ Symmetric ]", async function () {
+
+        });
+
+        it("userB accept the chat", async function () {
+            
+        });
+
+        it("userA and userB can start sending private messages", async function () {
+            
+        });
+
         // Handle Some Possible cases
         it("User try to create a chat without register before => Revert", async function () {
             
