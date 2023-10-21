@@ -10,6 +10,10 @@ contract PrivateChat {
     string constant con_pubKeyType = 'spki';
     string constant con_format = 'pem';
 
+    // msg = messages
+    string constant msg_bytesKey = '32';
+    string constant msg_bytesIV = '32';
+
     struct User {
         address addr;
         string pub;
