@@ -32,6 +32,24 @@ describe("Private Chat - Tests", function () {
             expect(contractPrivateChat).to.be.not.equal(null);
         });
 
+
+        // Some Possible cases
+        it("User try to create a chat without register before => Revert", async function () {
+            
+        });
+
+        it("UserA try to send a message to UserB, but UserB is not registred => Revert", async function () {
+            
+        });
+
+        it("UserA try to send a message to UserB, but UserB don't accept => Revert", async function () {
+            
+        });
+
+        it("Attacker try to read a message from another chat => this can se only the encrypted data", async function () {
+            
+        });
+
     });
 
 });
