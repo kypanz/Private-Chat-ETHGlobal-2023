@@ -4,6 +4,12 @@ pragma solidity ^0.8.0;
 
 contract PrivateChat {
 
+    // con = connection
+    string constant con_encryptionType = 'RSA';
+    string constant con_modulusLength = '2048';
+    string constant con_pubKeyType = 'spki';
+    string constant con_format = 'pem';
+    
     struct User {
         address addr;
         string pub;
