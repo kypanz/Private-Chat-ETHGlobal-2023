@@ -4,7 +4,8 @@ Private Messages on Blockchain using Asymmetric encryption + Symmetric encryptio
 
 ## Diagram flow
 
-- TODO : Dont forget upload the diagram here :)
+![PrivateChat-ETHGlobal-Hackthon-2023 drawio](https://github.com/kypanz/Private-Chat-ETHGlobal-2023/assets/37570367/cdbc9c87-d2d2-4939-855e-92b6e39966a3)
+
 
 ## Description
 
