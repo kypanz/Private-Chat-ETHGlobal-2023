@@ -53,6 +53,11 @@ contract PrivateChat {
 
     }
 
+    function acceptChat(uint256 _id) public {
+        // TODO : Requires checks
+        chats[_id].isAccepted = true;
+    }
+
     function sendMessage(uint256 _toChat, string memory _message) public {
         // TODO : Requires checks
         chats[_toChat].messages.push(_message);
