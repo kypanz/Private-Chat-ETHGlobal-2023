@@ -43,6 +43,7 @@ describe("Private Chat - Tests", function () {
         let userAkeys = { publicKey, privateKey } = generateAsymmetricKeys();
         let userBkeys = { publicKey, privateKey } = generateAsymmetricKeys();
         let attackerKeys = { publicKey, privateKey } = generateAsymmetricKeys();
+        let chatId = 0;
         let contractPrivateChat;
 
         it("Instanciate the contract and the accounts", async function () {
@@ -70,17 +71,18 @@ describe("Private Chat - Tests", function () {
         it("userA open a chat to userB, and define a secretKey for the chat to start a conversation [ Symmetric ]", async function () {
             const message = encryptAsymmetricMessage(userBkeys.publicKey, 'OsirisIsTheAESKey');
             const response_a = await contractPrivateChat.connect(userA).createChat(userB.address, message);
-            const resultMessage = await contractPrivateChat.connect(userA).getMessages(0);
+            const resultMessage = await contractPrivateChat.connect(userA).getMessages(chatId);
             expect(response_a).to.be.not.equal(undefined);
             expect(resultMessage.length > 0).to.be.equal(true);
         });
 
         it("userB accept the chat", async function () {
-
+            const response_b = await contractPrivateChat.connect(userB).acceptChat(chatId);
+            expect(typeof response_b.hash).to.not.be.equal(undefined);
         });
 
         it("userA and userB can start sending private messages", async function () {
-
+            
         });
 
         // Handle Some Possible cases
