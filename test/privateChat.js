@@ -1,6 +1,6 @@
 const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const { expect } = require("chai");
-
+const crypto = require('crypto');
 
 function generateKeys() {
     const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
@@ -33,8 +33,11 @@ describe("Private Chat - Tests", function () {
 
         // Global variables to test all cases
         let userA;
-        let userB
+        let userB;
         let attacker;
+        let userAkeys = { publicKey, privateKey } = generateKeys();
+        let userBkeys = { publicKey, privateKey } = generateKeys();
+        let attackerKeys = { publicKey, privateKey } = generateKeys();
         let contractPrivateChat;
 
         it("Instanciate the contract and the accounts", async function () {
@@ -51,7 +54,7 @@ describe("Private Chat - Tests", function () {
 
         // Ideal situation
         it("Users register in the smart contract with their public keys [ Asymmetric ]", async function () {
-
+            
         });
 
         it("userA open a chat to userB, and define a secretKey for the chat to start a conversation [ Symmetric ]", async function () {
