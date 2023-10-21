@@ -150,6 +150,7 @@ describe("Private Chat - Tests", function () {
             await expect(response_x).revertedWith('you need to be registered');
         });
 
+        /*
         it("UserA try to send a message to UserX, but UserX is not registred => Revert", async function () {
             // TODO : not required for the demostration, but can be handle
         });
@@ -161,6 +162,7 @@ describe("Private Chat - Tests", function () {
         it("Attacker try to read a message from another chat => this can se only the encrypted data", async function () {
             // TODO : not required for the demostration, but can be handle
         });
+        */
 
     });
 
