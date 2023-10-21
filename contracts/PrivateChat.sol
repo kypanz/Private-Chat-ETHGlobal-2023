@@ -17,6 +17,6 @@ contract PrivateChat {
 
     mapping(uint256 => Chat) chats;
 
-    
+    event MessageSended(uint256 _chatId, address _user, string _message);
 
 }
