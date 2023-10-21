@@ -2,7 +2,7 @@ const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helper
 const { expect } = require("chai");
 const crypto = require('crypto');
 
-function generateKeys() {
+function generateAsymmetricKeys() {
     const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
         modulusLength: 2048,
         publicKeyEncoding: {
@@ -15,6 +15,11 @@ function generateKeys() {
         },
     });
     return { publicKey, privateKey };
+}
+
+function encryptAsymmetricMessage(publicKey, message) {
+    const encryptedMessage = crypto.publicEncrypt(publicKey, Buffer.from(message));
+    return encryptedMessage.toString('base64');
 }
 
 
@@ -35,9 +40,9 @@ describe("Private Chat - Tests", function () {
         let userA;
         let userB;
         let attacker;
-        let userAkeys = { publicKey, privateKey } = generateKeys();
-        let userBkeys = { publicKey, privateKey } = generateKeys();
-        let attackerKeys = { publicKey, privateKey } = generateKeys();
+        let userAkeys = { publicKey, privateKey } = generateAsymmetricKeys();
+        let userBkeys = { publicKey, privateKey } = generateAsymmetricKeys();
+        let attackerKeys = { publicKey, privateKey } = generateAsymmetricKeys();
         let contractPrivateChat;
 
         it("Instanciate the contract and the accounts", async function () {
@@ -54,11 +59,20 @@ describe("Private Chat - Tests", function () {
 
         // Ideal situation
         it("Users register in the smart contract with their public keys [ Asymmetric ]", async function () {
-            
+            const response_a = await contractPrivateChat.connect(userA).register(userAkeys.publicKey);
+            const response_b = await contractPrivateChat.connect(userA).register(userAkeys.publicKey);
+            const response_attacker = await contractPrivateChat.connect(userA).register(userAkeys.publicKey);
+            expect(typeof response_a.hash).to.be.not.equal(undefined);
+            expect(typeof response_b.hash).to.be.not.equal(undefined);
+            expect(typeof response_attacker.hash).to.be.not.equal(undefined);
         });
 
         it("userA open a chat to userB, and define a secretKey for the chat to start a conversation [ Symmetric ]", async function () {
-
+            const message = encryptAsymmetricMessage(userBkeys.publicKey, 'OsirisIsTheAESKey');
+            const response_a = await contractPrivateChat.connect(userA).createChat(userB.address, message);
+            const resultMessage = await contractPrivateChat.connect(userA).getMessages(0);
+            expect(response_a).to.be.not.equal(undefined);
+            expect(resultMessage.length > 0).to.be.equal(true);
         });
 
         it("userB accept the chat", async function () {
