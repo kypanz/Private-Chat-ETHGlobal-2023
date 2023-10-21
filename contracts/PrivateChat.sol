@@ -30,4 +30,19 @@ contract PrivateChat {
         });
     }
 
+    function createChat(address _toUser) public {
+
+        User storage userA = users[msg.sender];
+        User storage userB = users[_toUser];
+        string[] memory messages;
+
+        chats[chatId] = Chat({
+            userA : userA,
+            userB : userB,
+            isAccepted : false,
+            messages : messages
+        });
+
+    }
+
 }
