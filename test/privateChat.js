@@ -21,13 +21,17 @@ describe("Private Chat - Tests", function () {
         let contractPrivateChat;
 
         it("Instanciate the contract and the accounts", async function () {
-            const { privateChat, accountA, accountB, accountC } = await loadFixture(createChatInstance); // deployOneYearLockFixture
+            const { privateChat, accountA, accountB, accountC } = await loadFixture(createChatInstance);
             contractPrivateChat = privateChat;
             userA = accountA;
             userB = accountB
             attacker = accountC;
+            expect(userA.address).to.be.not.equal(null);
+            expect(userB.address).to.be.not.equal(null);
+            expect(attacker.address).to.be.not.equal(null);
+            expect(contractPrivateChat).to.be.not.equal(null);
         });
 
     });
-    
+
 });
