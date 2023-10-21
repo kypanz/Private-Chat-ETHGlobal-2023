@@ -17,6 +17,13 @@ function generateAsymmetricKeys() {
     return { publicKey, privateKey };
 }
 
+function generateSymmetricKeys() {
+    const sharedPassword = 'OsirisIsTheAESKey';
+    const key = crypto.scryptSync(sharedPassword, 'salt', 32); // 32 bytes
+    const iv = crypto.randomBytes(16); // 16 bytes
+    return { key, iv };
+}
+
 function encryptAsymmetricMessage(publicKey, message) {
     const encryptedMessage = crypto.publicEncrypt(publicKey, Buffer.from(message));
     return encryptedMessage.toString('base64');
@@ -69,7 +76,8 @@ describe("Private Chat - Tests", function () {
         });
 
         it("userA open a chat to userB, and define a secretKey for the chat to start a conversation [ Symmetric ]", async function () {
-            const message = encryptAsymmetricMessage(userBkeys.publicKey, 'OsirisIsTheAESKey');
+            const { key, iv } = generateSymmetricKeys();
+            const message = encryptAsymmetricMessage(userBkeys.publicKey, `OsirisIsTheAESKey, the key is : ${key}, the iv is : ${iv}`);
             const response_a = await contractPrivateChat.connect(userA).createChat(userB.address, message);
             const resultMessage = await contractPrivateChat.connect(userA).getMessages(chatId);
             expect(response_a).to.be.not.equal(undefined);
@@ -82,7 +90,7 @@ describe("Private Chat - Tests", function () {
         });
 
         it("userA and userB can start sending private messages", async function () {
-            
+            //const response_b = await contractPrivateChat.connect(userA).sendMessage();
         });
 
         // Handle Some Possible cases
