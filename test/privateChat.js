@@ -22,9 +22,16 @@ function decryptAsymmetricMessage(privateKey, encryptedMessage) {
     return crypto.privateDecrypt(privateKey, bufferMessage);
 }
 
+function decryptSymmetricMessage(key, iv, encryptedMessage) {
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+    let decryptedData = decipher.update(encryptedMessage, 'hex', 'utf8');
+    decryptedData += decipher.final('utf8');
+    return decryptedData;
+}
+
 function generateSymmetricKeys() {
     const sharedPassword = 'OsirisIsTheAESKey';
-    const key = crypto.scryptSync(sharedPassword, 'salt', 32); // 32 bytes
+    const key = crypto.scryptSync(sharedPassword, 'salt', 32); // 32 bytes AES-256
     const iv = crypto.randomBytes(16); // 16 bytes
     return { key, iv };
 }
@@ -32,6 +39,13 @@ function generateSymmetricKeys() {
 function encryptAsymmetricMessage(publicKey, message) {
     const encryptedMessage = crypto.publicEncrypt(publicKey, Buffer.from(message));
     return encryptedMessage.toString('base64');
+}
+
+function encryptSymmetricMessage(key, iv, message) {
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    let encryptedData = cipher.update(message, 'utf8', 'hex');
+    encryptedData += cipher.final('hex');
+    return encryptedData;
 }
 
 
@@ -52,9 +66,17 @@ describe("Private Chat - Tests", function () {
         let userA;
         let userB;
         let attacker;
+
+        // Asymmetric keys
         let userAkeys = { publicKey, privateKey } = generateAsymmetricKeys();
         let userBkeys = { publicKey, privateKey } = generateAsymmetricKeys();
         let attackerKeys = { publicKey, privateKey } = generateAsymmetricKeys();
+
+        // Symmetric keys
+        let usersKeysAES = { key, iv } = generateSymmetricKeys();
+        let attackerAES = { key, iv } = generateSymmetricKeys();
+        let theSecretAES = 'OsirisIsTheAESKey';
+
         let chatId = 0;
         let contractPrivateChat;
 
@@ -80,9 +102,9 @@ describe("Private Chat - Tests", function () {
             expect(typeof response_attacker.hash).to.be.not.equal(undefined);
         });
 
-        it("userA open a chat to userB, and define a secretKey for the chat to start a conversation [ Symmetric ]", async function () {
-            const { key, iv } = generateSymmetricKeys();
-            const message = encryptAsymmetricMessage(userBkeys.publicKey, `OsirisIsTheAESKey, the key is : ${key.toString('hex')}, the iv is : ${iv.toString('hex')}`);
+        it("userA open a chat to userB, and define a secretKey for the chat to start a conversation [ Symmetric RSA ]", async function () {
+            const { key, iv } = usersKeysAES;
+            const message = encryptAsymmetricMessage(userBkeys.publicKey, `${theSecretAES}, the key is : ${key.toString('hex')}, the iv is : ${iv.toString('hex')}`);
             const response_a = await contractPrivateChat.connect(userA).createChat(userB.address, message);
             const resultMessage = await contractPrivateChat.connect(userA).getMessages(chatId);
             expect(response_a).to.be.not.equal(undefined);
@@ -98,8 +120,24 @@ describe("Private Chat - Tests", function () {
             expect(hasTheKey).to.be.equal(true);
         });
 
-        it("userA and userB can start sending private messages", async function () {
-            //const response_b = await contractPrivateChat.connect(userA).sendMessage();
+        it("userA and userB can start sending private messages [ Symmetric AES ]", async function () {
+            const plainText = 'This is a private message for the userA i like dinosaurs :)'
+            const plainTextTwo = 'Cool this works';
+            const { key, iv } = usersKeysAES;
+            const messageEncrypted = encryptSymmetricMessage(key, iv, plainText);
+            const response_a = await contractPrivateChat.connect(userA).sendMessage(chatId, messageEncrypted);
+            const messageEncryptedTwo = encryptSymmetricMessage(key, iv, plainTextTwo);
+            const response_b = await contractPrivateChat.connect(userB).sendMessage(chatId, messageEncryptedTwo);
+            expect(typeof response_a.hash).to.be.not.equal(undefined);
+            expect(typeof response_b.hash).to.be.not.equal(undefined);
+        });
+
+        it("userA and userB can decrypt their messages using the secret defined [ Symmetric AES ]", async function () {
+            const { key, iv } = usersKeysAES;
+            const responseMessages = await contractPrivateChat.getMessages(chatId);
+            const decryptedMessage = decryptSymmetricMessage(key, iv, responseMessages[1]);
+            expect(responseMessages[1].includes('dinosaurs')).to.be.equal(false);
+            expect(decryptedMessage.includes('dinosaurs')).to.be.equal(true);
         });
 
         // Handle Some Possible cases
