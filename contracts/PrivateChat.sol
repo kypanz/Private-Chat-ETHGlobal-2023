@@ -45,4 +45,14 @@ contract PrivateChat {
 
     }
 
+    function sendMessage(uint256 _toChat, string memory _message) public {
+        // TODO : Requires checks
+        chats[_toChat].messages.push(_message);
+        emit MessageSended(_toChat, msg.sender, _message);
+    }
+
+    function getMessages(uint256 _id) public view returns(Chat memory _chats) {
+        return chats[_id];
+    }
+
 }
